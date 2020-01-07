@@ -10,7 +10,6 @@
     <version>XiAn-Metro-3</version>
     <modules>
         <module>1-Algorithm-Brushing</module>
+        <module>2-Collection-Analysis</module>
     </modules>
-
-
 </project>
