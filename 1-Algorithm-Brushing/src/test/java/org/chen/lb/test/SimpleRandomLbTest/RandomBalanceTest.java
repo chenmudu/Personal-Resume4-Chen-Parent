@@ -1,7 +1,13 @@
-package org.chen.lb.test;
+package org.chen.lb.test.SimpleRandomLbTest;
 
 import org.chen.lb.LoadBalanceIService;
-import org.chen.lb.aRandomBanlace.SimpleRandomGetServer;
+import org.chen.lb.aSimpleRandomBanlace.SimpleRandomGetServer;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * MIT License
@@ -23,8 +29,16 @@ import org.chen.lb.aRandomBanlace.SimpleRandomGetServer;
  * @Description:
  */
 public class RandomBalanceTest {
+
+    private static final Integer FOR_LOOP_COUNT = 10;
+
     public static void main(String[] args) {
         LoadBalanceIService service = new SimpleRandomGetServer();
-        System.out.println("current server ip result is: " + service.getServerIp());
+        List<String> serverIps = new ArrayList<>(FOR_LOOP_COUNT);
+        for(int i = 0; i < FOR_LOOP_COUNT; i++) {
+            serverIps.add(service.getServerIp());
+        }
+        Map<String, Long> collectMap = serverIps.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        System.out.println("current server ip result is: " + collectMap);
     }
 }

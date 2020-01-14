@@ -1,3 +1,13 @@
+package org.chen.lb.bSimpleWeightRandomBanlace;
+
+import org.chen.lb.LoadBalanceIService;
+import org.chen.lb.serverConfig.ServerIp;
+import org.chen.lb.serverUtils.ServerIpUtils;
+
+import javax.lang.model.util.AbstractAnnotationValueVisitor6;
+import java.util.List;
+import java.util.Random;
+
 /**
  * MIT License
  * <p>
@@ -14,11 +24,15 @@
  * copies or substantial portions of the Software.
  *
  * @Author chenchen6
- * @Date: 2020/1/7 21:59
+ * @Date: 2020/1/14 22:38
  * @Description:
  */
-public class TestMain {
-    public static void main(String[] args) {
-        System.out.println("Hello World!");
+public class SimpleWeightGetServer extends LoadBalanceIService {
+    private Random RANDOM_SEED = new Random();
+
+    @Override
+    public String getServerIp() {
+        List<ServerIp> copyWeightServers = ServerIpUtils.getServerIpListByCopyWeightWay();
+        return copyWeightServers.get(RANDOM_SEED.nextInt(copyWeightServers.size())).getServerIp();
     }
 }

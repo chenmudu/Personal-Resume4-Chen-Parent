@@ -1,8 +1,7 @@
-package org.chen.lb.aRandomBanlace;
+package org.chen.lb.aSimpleRandomBanlace;
 
 import org.chen.lb.LoadBalanceIService;
 import org.chen.lb.serverUtils.ServerIpUtils;
-import org.omg.CORBA.PRIVATE_MEMBER;
 
 import java.util.Random;
 
