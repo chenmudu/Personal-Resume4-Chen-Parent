@@ -1,8 +1,6 @@
-package org.chen.lb.serverConfig;
+package org.chen.lb.commonUtils;
 
-import lombok.*;
-
-import java.io.Serializable;
+import org.omg.CORBA.PRIVATE_MEMBER;
 
 /**
  * MIT License
@@ -20,17 +18,12 @@ import java.io.Serializable;
  * copies or substantial portions of the Software.
  *
  * @Author chenchen6
- * @Date: 2020/1/14 00:09
+ * @Date: 2020/1/19 21:27
  * @Description:
  */
-//@EqualsAndHashCode
-//@Data
-@Setter
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder(toBuilder = true)
-public class ServerIp implements Serializable {
+public class StringUtils {
 
-    private transient String  serverIp;
+    //空字符串。
+    public static final String EMPTY_STRING = "";
+
 }
