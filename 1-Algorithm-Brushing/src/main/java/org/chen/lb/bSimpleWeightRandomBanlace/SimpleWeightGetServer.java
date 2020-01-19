@@ -25,7 +25,7 @@ import java.util.Random;
  *
  * @Author chenchen6
  * @Date: 2020/1/14 22:38
- * @Description:
+ * @Description: 同简易随机算法一致.但此时Ip列表基于权重进行复制。内存消耗增大。
  */
 public class SimpleWeightGetServer extends LoadBalanceIService {
     private Random RANDOM_SEED = new Random();

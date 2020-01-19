@@ -1,13 +1,15 @@
-package org.chen.lb.test.SimpleWeightLbTest;
+package org.chen.lb.test.ImporvedWeightLbTest;
 
 import org.chen.lb.LoadBalanceIService;
-import org.chen.lb.aSimpleRandomBanlace.SimpleRandomGetServer;
-import org.chen.lb.bSimpleWeightRandomBanlace.SimpleWeightGetServer;
+import org.chen.lb.cImprovedWeightRandomBalance.ImprovedWeightGetServer;
+import sun.applet.Main;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * MIT License
@@ -25,26 +27,25 @@ import java.util.stream.Stream;
  * copies or substantial portions of the Software.
  *
  * @Author chenchen6
- * @Date: 2020/1/15 00:00
+ * @Date: 2020/1/19 23:42
  * @Description:
  */
 public class RandomBalanceTest {
-    private static final Integer FOR_LOOP_COUNT = 100;
-
+    private static int FOR_LOOP_COUNT = 100;
     public static void main(String[] args) {
-        LoadBalanceIService service = new SimpleWeightGetServer();
+        LoadBalanceIService service = new ImprovedWeightGetServer();
         List<String> serverIps = new ArrayList<>(FOR_LOOP_COUNT);
         for(int i = 0; i < FOR_LOOP_COUNT; i++) {
             serverIps.add(service.getServerIp());
         }
         Map<String, Long> collectMap =  serverIps.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
         Map<String, Long> sortMapByKey = collectMap.entrySet().stream()
-                                                .sorted(Map.Entry.comparingByKey())
-                                                .collect(Collectors.toMap(
-                                                        Map.Entry::getKey,
-                                                        Map.Entry :: getValue,
-                                                        (oldValue,newValue) -> oldValue,
-                                                        LinkedHashMap::new));
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry :: getValue,
+                        (oldValue,newValue) -> oldValue,
+                        LinkedHashMap::new));
         System.out.println("current server ip result is: " + sortMapByKey);
     }
 }

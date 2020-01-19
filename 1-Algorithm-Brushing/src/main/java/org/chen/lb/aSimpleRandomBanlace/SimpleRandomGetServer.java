@@ -22,7 +22,7 @@ import java.util.Random;
  *
  * @Author chenchen6
  * @Date: 2020/1/14 00:07
- * @Description:
+ * @Description: 简单的随机算法.依据伪随机数从指定Ip列表中随机获取对应下表Ip值并返回。
  */
 public class SimpleRandomGetServer extends LoadBalanceIService {
     /**

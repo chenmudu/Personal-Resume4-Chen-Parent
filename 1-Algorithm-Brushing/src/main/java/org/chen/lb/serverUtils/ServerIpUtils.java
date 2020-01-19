@@ -1,10 +1,8 @@
 package org.chen.lb.serverUtils;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
-import com.sun.org.apache.bcel.internal.generic.RETURN;
 import org.chen.lb.commonUtils.CollectionUtils;
+import org.chen.lb.commonUtils.StringUtils;
 import org.chen.lb.serverConfig.ServerIp;
-import org.omg.CORBA.NVList;
 
 import java.util.*;
 import java.util.concurrent.locks.Lock;
@@ -43,6 +41,7 @@ public class ServerIpUtils {
      * 或者集中式网关中去读。
      */
     private transient static Integer SIZE_SERVER_IP_LIST = 10;
+
     public static Integer WEIGHT_SUM_ARRAY = 50;
 
     public static int[] WEIGHT_ARRAY = {1, 8, 3, 6, 5, 5, 4, 7, 2, 9};
@@ -88,12 +87,13 @@ public class ServerIpUtils {
             return SERVER_IPS_MAP;
         }
         ServerIp currentServer = null;
+        String currentIp = StringUtils.EMPTY_STRING;
+        currentLock.lock();
         try {
-            currentLock.lock();
             for(int i = 0; i < SIZE_SERVER_IP_LIST; i++) {
     //            ServerIp currentServer = ServerIp.builder().serverIp(PRE_SERVER_IP + (i + 1)).build();
-                //bug留至明天修复...
-                currentServer = new ServerIp(PRE_SERVER_IP + (i + 1));
+                currentIp = PRE_SERVER_IP + (i + 1);
+                currentServer = new ServerIp(currentIp);
                 SERVER_IPS_MAP.put(currentServer, WEIGHT_ARRAY[i]);
             }
         } finally {
@@ -125,4 +125,6 @@ public class ServerIpUtils {
         return WEIGHT_SUM_SERVERS;
     }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 }
