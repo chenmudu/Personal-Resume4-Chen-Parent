@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 public class RandomBalanceTest {
     private static int FOR_LOOP_COUNT = 100;
     public static void main(String[] args) {
+        long startTime = System.currentTimeMillis();
         LoadBalanceIService service = new ImprovedWeightGetServer();
         List<String> serverIps = new ArrayList<>(FOR_LOOP_COUNT);
         for(int i = 0; i < FOR_LOOP_COUNT; i++) {
@@ -43,9 +44,10 @@ public class RandomBalanceTest {
                 .sorted(Map.Entry.comparingByKey())
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
-                        Map.Entry :: getValue,
+                        Map.Entry::getValue,
                         (oldValue,newValue) -> oldValue,
                         LinkedHashMap::new));
         System.out.println("current server ip result is: " + sortMapByKey);
+        System.out.println("current server ip result spent time is " + Long.valueOf(System.currentTimeMillis() - startTime));
     }
 }
