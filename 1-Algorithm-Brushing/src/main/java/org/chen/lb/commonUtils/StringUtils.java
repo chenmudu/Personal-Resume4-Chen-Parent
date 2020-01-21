@@ -1,6 +1,10 @@
 package org.chen.lb.commonUtils;
 
+import com.sun.istack.internal.Nullable;
 import org.omg.CORBA.PRIVATE_MEMBER;
+
+import java.util.Objects;
+import java.util.jar.JarEntry;
 
 /**
  * MIT License
@@ -26,4 +30,7 @@ public class StringUtils {
     //空字符串。
     public static final String EMPTY_STRING = "";
 
+    public static boolean isEmpty(@Nullable String currentStr) {
+        return Objects.isNull(currentStr.trim()) || currentStr.trim().length() == 0;
+    }
 }

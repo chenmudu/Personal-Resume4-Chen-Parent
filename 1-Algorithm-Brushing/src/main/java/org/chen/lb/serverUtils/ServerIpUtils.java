@@ -7,6 +7,7 @@ import org.chen.lb.serverConfig.ServerIp;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * MIT License
@@ -37,13 +38,17 @@ public class ServerIpUtils {
 
     /**
      * 给定服务器ip的个数。
-     * 当然生产肯定是从Apollo中去读取.
-     * 或者集中式网关中去读。
      */
     private transient static Integer SIZE_SERVER_IP_LIST = 10;
 
+    /**
+     * 权重之和。其实应该的进行计算。做成application级的缓存。
+     */
     public static Integer WEIGHT_SUM_ARRAY = 50;
 
+    /**
+     * 权重数组。
+     */
     public static int[] WEIGHT_ARRAY = {1, 8, 3, 6, 5, 5, 4, 7, 2, 9};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -56,6 +61,7 @@ public class ServerIpUtils {
      * 缓存目标服务器的Ip集合。
      */
     private static List<ServerIp>  SERVER_IP_LIST = new ArrayList<>(SIZE_SERVER_IP_LIST);
+
 
     /**
      * 以固定方式去获取当前IpList集合List。
@@ -75,8 +81,8 @@ public class ServerIpUtils {
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    private static  Lock currentLock = new ReentrantLock();
-
+    private static  ReentrantReadWriteLock currentLock = new ReentrantReadWriteLock();
+    private static Lock READ_LOCK = currentLock.readLock();
     private static Map<ServerIp, Integer> SERVER_IPS_MAP = new LinkedHashMap<>();
     /**
      * 以固定方式去获取当前IpMap。
@@ -88,7 +94,7 @@ public class ServerIpUtils {
         }
         ServerIp currentServer = null;
         String currentIp = StringUtils.EMPTY_STRING;
-        currentLock.lock();
+        READ_LOCK.lock();
         try {
             for(int i = 0; i < SIZE_SERVER_IP_LIST; i++) {
     //            ServerIp currentServer = ServerIp.builder().serverIp(PRE_SERVER_IP + (i + 1)).build();
@@ -97,7 +103,7 @@ public class ServerIpUtils {
                 SERVER_IPS_MAP.put(currentServer, WEIGHT_ARRAY[i]);
             }
         } finally {
-            currentLock.unlock();
+            READ_LOCK.unlock();
         }
         return SERVER_IPS_MAP;
     }
