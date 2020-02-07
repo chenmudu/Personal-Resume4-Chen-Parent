@@ -1,6 +1,15 @@
 package org.chen.lb.iConsistentHashBalance;
 
 import org.chen.lb.LoadBalanceIService;
+import org.chen.lb.iConsistentHashBalance.consistentHash.ConsistentHashRouter;
+import org.chen.lb.serverConfig.ServerIp;
+import org.chen.lb.serverConfig.node.Node;
+import org.chen.lb.serverUtils.ServerIpUtils;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
 
 /**
  * MIT License
@@ -22,8 +31,49 @@ import org.chen.lb.LoadBalanceIService;
  * @Description:
  */
 public class ConsistentHashGetServer extends LoadBalanceIService {
+
+    private volatile ConsistentHashRouter hashRouter;
+
+    private Random random = new Random();
+
+    /**
+     * 虚拟结点个数.... 怎么确定呢。
+     */
+    private int vNodeCount = 10;
     @Override
     public String getServerIp() {
-        return null;
+        List<ServerIp> serverIps = ServerIpUtils.getServerIpsByFixedWay();
+        initConsistentHashRouter(serverIps, vNodeCount);
+        //call goRoute function.
+        Node node = hashRouter.routeNodeServer(String.valueOf(random.nextInt(Integer.MAX_VALUE)));
+        return node.getKey();
+    }
+
+    /**
+     * 初始化分发器。
+     * @param pNodes
+     * @param vNodeCount
+     */
+    private void initConsistentHashRouter(Collection<?> pNodes, int vNodeCount) {
+        if(Objects.isNull(hashRouter)) {
+            synchronized (ConsistentHashRouter.class) {
+                if(Objects.isNull(hashRouter)) {
+                    hashRouter = new ConsistentHashRouter(pNodes, vNodeCount);
+                }
+            }
+        }
+    }
+
+
+    public void removeNode(ServerIp serverIp) {
+        if(Objects.isNull(hashRouter)) {
+            throw new IllegalArgumentException("Current hash router is null.");
+        }
+        hashRouter.removeNode(serverIp);
+    }
+
+    public void addNode(ServerIp pNode) {
+        Objects.requireNonNull(pNode, "Current add pNode is null.");
+        hashRouter.addNode(pNode, vNodeCount);
     }
 }

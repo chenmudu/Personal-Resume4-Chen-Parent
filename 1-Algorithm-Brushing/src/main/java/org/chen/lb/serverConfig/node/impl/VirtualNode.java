@@ -24,7 +24,6 @@ import org.chen.lb.serverConfig.node.Node;
  * @Description:
  */
 @NoArgsConstructor
-@AllArgsConstructor
 public class VirtualNode<T extends Node> implements Node {
     /**
      * pNode.

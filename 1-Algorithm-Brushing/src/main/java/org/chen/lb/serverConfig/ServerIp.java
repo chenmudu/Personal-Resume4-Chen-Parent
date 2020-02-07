@@ -1,6 +1,7 @@
 package org.chen.lb.serverConfig;
 
 import lombok.*;
+import org.chen.lb.serverConfig.node.Node;
 
 import java.io.Serializable;
 
@@ -30,7 +31,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class ServerIp implements Serializable {
+public class ServerIp implements Serializable, Node {
 
     private transient String  serverIp;
     // 很久之前就因为equals和hashcode的东西做过比较。
@@ -67,5 +68,10 @@ public class ServerIp implements Serializable {
     @Override
     public int hashCode() {
         return serverIp != null ? serverIp.hashCode() : 0;
+    }
+
+    @Override
+    public String getKey() {
+        return serverIp;
     }
 }
