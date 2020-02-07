@@ -31,7 +31,7 @@ import java.util.*;
 public class ConsistentHashRouter<T extends Node> {
 
     /**
-     * hash function for put node into current tree map .
+     * hash function for put node into current tree map . It's a hash ring container.
      */
     private HashFunction hashFunction;
 
@@ -41,10 +41,12 @@ public class ConsistentHashRouter<T extends Node> {
     private final SortedMap<Long, VirtualNode<T>> ringContainer = new TreeMap<>();
 
 
+    //ConsistentHashRouter() {}
+
     /**
      *
-     * @param pNodes
-     * @param vNodeCount
+     * @param pNodes        实际server结点列表。
+     * @param vNodeCount    虚拟结点个数。
      */
     public ConsistentHashRouter(Collection<T> pNodes, int vNodeCount) {
         this(pNodes, vNodeCount, new MD5Hash());
@@ -52,8 +54,8 @@ public class ConsistentHashRouter<T extends Node> {
 
     /**
      *
-     * @param pNodes
-     * @param vNodeCount
+     * @param pNodes        实际server结点列表。
+     * @param vNodeCount    虚拟结点个数。
      * @param hashFunction
      */
     public ConsistentHashRouter(Collection<T> pNodes, int vNodeCount, HashFunction hashFunction) {
@@ -62,9 +64,9 @@ public class ConsistentHashRouter<T extends Node> {
     }
 
     /**
-     * add node for ring container.
-     * @param pNode
-     * @param vNodeCount
+     * add node for ring container. 虚拟节点放置容器内。
+     * @param pNode         实际的server结点。
+     * @param vNodeCount    虚拟结点个数。
      */
     public void addNode(T pNode, int vNodeCount) {
         if(vNodeCount < 0) {
@@ -81,8 +83,8 @@ public class ConsistentHashRouter<T extends Node> {
 
     /**
      *  获取存在节点复制后的序列号。
-     * @param pNode
-     * @return
+     * @param pNode     当前受访服务器
+     * @return replicas  当前服务器存在虚拟机点的个数。
      */
     private int getExistingReplicas(T pNode) {
         int replicas = 0;
@@ -90,7 +92,9 @@ public class ConsistentHashRouter<T extends Node> {
         if(CollectionUtils.mapIsEmpty(ringContainer)) {
             return replicas;
         }
+        //
         for(VirtualNode currentVNode : ringContainer.values()) {
+            //if current node is virtual node , replicas ++ .
             if(currentVNode.isVirtualNodeOf(pNode)) {
                 ++replicas;
             }
@@ -100,9 +104,9 @@ public class ConsistentHashRouter<T extends Node> {
 
     /**
      * init router for my hash function and ring container.
-     * @param pNodes
-     * @param vNodeCount
-     * @param hashFunction
+     * @param pNodes          受访服务器集合。
+     * @param vNodeCount     虚拟结点的个数
+     * @param hashFunction  hash函数。
      */
     private void initRouter(Collection<T> pNodes, int vNodeCount, HashFunction hashFunction) {
         this.hashFunction = hashFunction;
@@ -113,6 +117,59 @@ public class ConsistentHashRouter<T extends Node> {
         }
     }
 
+    /**
+     *  删除服务器虚拟结点。
+     * @param pNode
+     */
+    public void removeNode(T pNode) {
+        Iterator<Long> it = ringContainer.keySet().iterator();
+        Long key = null;
+        VirtualNode currentVirtualNode = null;
+        while(it.hasNext()){
+            key = it.next();
+            currentVirtualNode = ringContainer.get(key);
+            // 说明删除了一个不存在的结点. 所以在调用删除结点的时候必须先判断此结点是否存在于hash环。
+            if(Objects.isNull(currentVirtualNode)) {
+                continue;
+            }
+            if(currentVirtualNode.isVirtualNodeOf(pNode)) {
+                it.remove();
+            }
+        }
+    }
+
+    /**
+     *
+     * @param requestKey request Ip.
+     * @return  member of ringContainer.
+     */
+    public T routeNodeServer(String requestKey) {
+        // key is long hash value
+        if(CollectionUtils.mapIsEmpty(ringContainer)) {
+            return null;
+        }
+        Long nodeHashValue = null;
+        // 将请求Ip 转换成hash值。
+        long keyHashValue = hashFunction.hashStringToLong(requestKey);
+        //
+        SortedMap<Long, VirtualNode<T>> tailMap = ringContainer.tailMap(keyHashValue);
+        //
+        if(CollectionUtils.mapIsEmpty(tailMap)) {
+            nodeHashValue = ringContainer.firstKey();
+        } else {
+            nodeHashValue = tailMap.firstKey();
+        }
+        //ringContainer.tailMap()
+        return ringContainer.get(nodeHashValue).getPhysicalNode();
+    }
+
+    /**
+     * 测试hash函数的散列性。
+     * @return
+     */
+    public static MD5Hash getMd5Hash() {
+        return new MD5Hash();
+    }
 
 
     private static class MD5Hash implements HashFunction {
@@ -142,6 +199,12 @@ public class ConsistentHashRouter<T extends Node> {
             }
         }
 
+        /**
+         * hash算法决定了落点是否更加的均衡。
+         * 所以hash算法真几是让人头疼。
+         * @param  key          String key
+         * @return hashValue    long hash value from string.
+         */
         @Override
         public long hashStringToLong(String key) {
             //reset digest.
@@ -152,11 +215,25 @@ public class ConsistentHashRouter<T extends Node> {
             // hash string to long.
             long hashValue = 0L;
             //信息摘要进行打乱顺序转换成long型。
-            for(int i = 0; i < 4; i++) {
+            //本来是固定4位.发现大于1W后存在重复的hashValue值.改成动态的吧。
+            for(int i = 0; i < digestByteData.length - 1; i++) {
                 hashValue <<= 8;
                 hashValue |= ((int)digestByteData[i]) & 0XFF;
             }
             return hashValue;
         }
+    }
+
+    public static void main(String[] args) {
+        //10w个才会出现一个相同的.测试结果仅存参考.
+        final int count = 10000000;
+        MD5Hash hash = ConsistentHashRouter.getMd5Hash();
+        String serverIp = "127.0.0.";
+        //Map<String, Long> map = new HashMap();
+        Set<Long> hashSet = new HashSet<>();
+        for(int i = 0; i < count; i++) {
+            hashSet.add(hash.hashStringToLong(serverIp + i));
+        }
+        System.out.println("current hash set size = " + hashSet.size());
     }
 }
