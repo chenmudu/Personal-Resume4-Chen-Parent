@@ -1,9 +1,5 @@
 package org.chen.find;
 
-import org.chen.find.hashMapContains.HashMapContainsUtils;
-import org.chen.find.hashSetContainsUtils.HashSetContainsUtils;
-import org.chen.find.listContains.ListContainsUtils;
-
 /**
  * MIT License
  * <p>
@@ -33,6 +29,6 @@ public class TestMain {
     public static void main(String[] args) {
         //ListContainsUtils.detectionListContains();
         //HashMapContainsUtils.detectionHashMapContains();
-        HashSetContainsUtils.detectionHashMapContains();
+        //HashSetContainsUtils.detectionHashMapContains();
     }
 }

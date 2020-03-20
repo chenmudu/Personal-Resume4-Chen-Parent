@@ -1,9 +1,8 @@
-package org.chen.find.hashSetContainsUtils;
+package org.chen.find.hashSetContains;
 
 import org.chen.find.domain.PurchaseOrderDto;
 import org.chen.find.utils.OrderUtils;
 
-import java.util.HashMap;
 import java.util.HashSet;
 
 /**
