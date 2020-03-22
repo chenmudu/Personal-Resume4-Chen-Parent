@@ -1,4 +1,4 @@
-package org.chen.leetcode.hot.top100.a2AddTwoNumbers;
+package org.chen.leetcode.hot.top100.first.a2AddTwoNumbers;
 
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +37,21 @@ public class Solution {
         printListNodeFromHeadNode(addTwoNumbers(headNode1, headNode2));
     }
 
+    /**
+     * 其实很好理解，幼儿园时候学习10进制加法的时候都是从右向左去进位 + 1。
+     * for example : 23 + 35 = ?
+     *                  2  7
+     *               +  3  5
+     * ---------------------------------
+     *                  6  2
+     *  5 + 7(从右向左加，满10进1，且最大为：  9 + 9 + 1。)
+     *  所以此题只需要时刻保存进的位数，同时将某位上的数放入链表的下一个结构即可。(从左往右即可。)
+     *  此题有个小技巧： 创建空结点去当初始化的结点，返回则返回emptyNode.next。
+     *  对于链表的双指针问题好像大多都需要这样的冗余结点。(至少上次面试删除倒数第K的元素就是这样)
+     * @param nodeList1
+     * @param nodeList2
+     * @return 新链表的
+     */
     private static ListNode addTwoNumbers(ListNode nodeList1, ListNode nodeList2) {
         // 空结点作为头结点。
         ListNode emptyNode = new ListNode(0);
@@ -54,7 +69,7 @@ public class Solution {
             if(Objects.nonNull(nodeList1)) { nodeList1 = nodeList1.nextNode;}
             if(Objects.nonNull(nodeList2)) { nodeList2 = nodeList2.nextNode;}
         }
-        //
+        //这儿也就是最后多的那一位。
         if(aryNum > 0) {currentNode.nextNode = new ListNode(aryNum);}
         //空结点的下一个结点就是新链表的头结点。
         return emptyNode.nextNode;

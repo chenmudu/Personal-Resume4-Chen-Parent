@@ -1,4 +1,4 @@
-package org.chen.leetcode.hot.top100;
+package org.chen.leetcode.hot.top100.first.a4MedianOfTwoSortedArrays;
 
 /**
  * MIT License
@@ -16,9 +16,27 @@ package org.chen.leetcode.hot.top100;
  * copies or substantial portions of the Software.
  *
  * @Author chenchen6
- * @Date: 2020/3/18 20:41
+ * @Date: 2020/3/21 15:46
  * @Description:
+ * 示例 1:
+ *
+ * nums1 = [1, 3]
+ * nums2 = [2]
+ *
+ * 则中位数是 2.0
+ * 示例 2:
+ *
+ * nums1 = [1, 2]
+ * nums2 = [3, 4]
+ *
+ * 则中位数是 (2 + 3)/2 = 2.5
  */
-public class Test {
-    //占位类。
+public class Solution {
+    public static void main(String[] args) {
+
+    }
+
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        return 1.1;
+    }
 }
