@@ -1,4 +1,4 @@
-package org.chen.find.bitSetContains;
+package org.chen.sword.finger.offer.first;
 
 /**
  * MIT License
@@ -16,8 +16,9 @@ package org.chen.find.bitSetContains;
  * copies or substantial portions of the Software.
  *
  * @Author chenchen6
- * @Date: 2020/2/25 19:17
+ * @Date: 2020/3/18 20:41
  * @Description:
  */
-public class BitSetContainsUtils {
+public class Test {
+    //占位类。
 }

@@ -1,4 +1,4 @@
-package org.chen.leetcode.hot.top100.a1TwoSum;
+package org.chen.leetcode.hot.top100.first.a1TwoSum;
 
 import java.util.HashMap;
 
