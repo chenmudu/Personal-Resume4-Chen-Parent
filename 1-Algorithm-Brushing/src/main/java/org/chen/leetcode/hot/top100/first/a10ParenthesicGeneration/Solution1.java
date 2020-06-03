@@ -1,6 +1,7 @@
 package org.chen.leetcode.hot.top100.first.a10ParenthesicGeneration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
